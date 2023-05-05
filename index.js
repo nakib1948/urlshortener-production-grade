@@ -13,7 +13,7 @@ const port = process.env.PORT || 3002;
 const initializePassport = require("./src/passportConfig");
 const createShortUrl = require("./src/createShortUrl");
 const redirecturl = require("./src/redirecturl");
-
+const updateurl = require("./src/updateurl");
 initializePassport(passport);
 
 app.use(bodyParser.json());
@@ -43,14 +43,10 @@ app.get("/:shortUrl", async (req, res) => {
   await redirecturl(req, res);
 });
 
-app.post("/updateurl/:shorturl", async (req, res) => {
+app.get("/updateurl/:shorturl", async (req, res) => {
   if (req.isAuthenticated()) {
-    await createShortUrl(req, res);
+    await updateurl(req, res);
   } else return res.status(400).json({ error: "Please login to update url" });
-});
-
-app.get("/api/shorturl/:shorturl", (req, res) => {
-  const shorturl = parseInt(req.params.shorturl);
 });
 
 app.post("/users/register", async (req, res) => {
