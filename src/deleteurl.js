@@ -1,8 +1,7 @@
 const pool = require("../db");
-const shortid = require("shortid");
-module.exports = async function updateurl(req, res) {
+
+module.exports = async function deleteurl(req, res) {
   const { shorturl } = req.params;
-  const { newShortUrl } = req.body;
   const userEmail = req.user.email;
 
   const result = await pool.query("SELECT * FROM url WHERE shorturl = $1", [
@@ -18,17 +17,18 @@ module.exports = async function updateurl(req, res) {
 
     if (result1.rows.length > 0) {
       const result = await pool.query(
-        "UPDATE url SET shorturl = $1 WHERE shorturl = $2 RETURNING *",
-        [newShortUrl, shorturl]
+        "DELETE FROM url WHERE shorturl = $1 RETURNING *",
+        [shorturl]
       );
       if (result.rows.length > 0) {
         return res.json({
           success: true,
-          message: "Short URL updated successfully.",
+          message: "Short URL deleted successfully.",
         });
       } else {
         return res.status(404).json({ error: "Short URL not found." });
       }
-    } else res.status(404).json({ error: "Short URL not found." });
-  } else res.status(404).json({ error: "Short URL not found." });
+    } else
+      res.status(404).json({ error: "Short URL not found.", message: "ok" });
+  } else res.status(404).json({ error: "Short URL not found.", message: "ok" });
 };

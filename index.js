@@ -14,6 +14,9 @@ const initializePassport = require("./src/passportConfig");
 const createShortUrl = require("./src/createShortUrl");
 const redirecturl = require("./src/redirecturl");
 const updateurl = require("./src/updateurl");
+const deleteurl = require("./src/deleteurl");
+const allurl = require("./src/allurl");
+
 initializePassport(passport);
 
 app.use(bodyParser.json());
@@ -32,7 +35,7 @@ app.use(passport.session());
 app.use(flash());
 
 app.get("/", async (req, res) => {
-  //await allurl(req, res)
+  await allurl(req, res);
 });
 
 app.post("/shorturl", async (req, res) => {
@@ -43,7 +46,13 @@ app.get("/:shortUrl", async (req, res) => {
   await redirecturl(req, res);
 });
 
-app.get("/updateurl/:shorturl", async (req, res) => {
+app.get("/deleteurl/:shorturl", async (req, res) => {
+  if (req.isAuthenticated()) {
+    await deleteurl(req, res);
+  } else return res.status(400).json({ error: "Please login to delete url" });
+});
+
+app.put("/updateurl/:shorturl", async (req, res) => {
   if (req.isAuthenticated()) {
     await updateurl(req, res);
   } else return res.status(400).json({ error: "Please login to update url" });
