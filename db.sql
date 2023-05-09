@@ -13,3 +13,16 @@ CREATE TABLE users(
     password VARCHAR(255) NOT NULL,
     UNIQUE (email)
 );
+
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  useremail VARCHAR(255) UNIQUE,
+  password VARCHAR(255)
+);
+
+CREATE TABLE url (
+  id SERIAL PRIMARY KEY,
+  shorturl VARCHAR(255) NOT NULL,
+  longurl VARCHAR(255) NOT NULL,
+  user_id INTEGER
+);

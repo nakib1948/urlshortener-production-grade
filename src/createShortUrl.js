@@ -5,32 +5,25 @@ const pool = require("../db");
 module.exports = async function createShortUrl(req, res) {
   const Url = req.body.url;
 
+  if(Url.length>100)
+  {
+    return res.status(400).json({ error: "URL length should be under 200 characters" });
+  }
+
   const shortId = shortid.generate();
-  const shortId1 = shortid.generate();
 
   if (req.isAuthenticated()) {
-    const userEmail = req.user.email;
-    pool.query(
-      `SELECT * FROM users WHERE email = $1`,
-      [userEmail],
-      async (err, results) => {
-        if (err) throw err;
-        //  console.log(results.rows);
-        if (results.rows.length > 0) {
-          const id = results.rows[0].id;
-          const newUrl = await pool.query(
-            "INSERT INTO url (userid,originalurl,shorturl) VALUES($1 ,$2, $3) RETURNING *",
-            [id, Url, shortId]
-          );
-          res.json({ message: `${id} ${Url} ${shortId}`, data: newUrl.rows });
-        }
-      }
+    const userid = req.user.id
+    const newUrl = await pool.query(
+      "INSERT INTO url (shorturl,longurl,user_id) VALUES($1 ,$2, $3) RETURNING *",
+      [ shortId,Url, userid]
     );
+    res.json({ message: `${Url} ${shortId}`, data: newUrl.rows });
   } else {
     const newUrl = await pool.query(
-      "INSERT INTO url (userid,originalurl,shorturl) VALUES($1 ,$2, $3) RETURNING *",
-      [shortId1, Url, shortId]
+      "INSERT INTO url (shorturl,longurl) VALUES($1 ,$2) RETURNING *",
+      [ shortId,Url]
     );
-    res.json({ message: `${shortId1} ${Url} ${shortId}`, data: newUrl.rows });
+    res.json({ message: `${Url} ${shortId}`, data: newUrl.rows });
   }
 };

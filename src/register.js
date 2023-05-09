@@ -1,12 +1,13 @@
 const bcrypt = require("bcrypt");
 const shortid = require("shortid");
-const { v4: uuidv4 } = require("uuid");
+
 const pool = require("../db");
 
 module.exports = async function registerUser(req, res) {
-  let { name, email, password, password2 } = req.body;
+  let { email, password, password2 } = req.body;
 
-  if (!name || !email || !password || !password2) {
+  if ( !email || !password || !password2) {
+    console.log(email,password,password2)
     return res.status(400).json({ error: "Please enter all fields" });
   }
   if (password.length < 6) {
@@ -17,8 +18,8 @@ module.exports = async function registerUser(req, res) {
   if (password != password2)
     return res.status(400).json({ error: "Passwords do not match" });
 
-  const hashedPassword = await bcrypt.hash(password, 10);
-  pool.query(`SELECT * FROM users WHERE email=$1`, [email], (err, results) => {
+  const hashedPassword = await bcrypt.hash(password, 10)
+  pool.query(`SELECT * FROM users WHERE useremail=$1`, [email], (err, results) => {
     if (err) {
       throw err;
     }
@@ -27,11 +28,9 @@ module.exports = async function registerUser(req, res) {
     } else {
       pool.query(
         `
-          INSERT INTO users (name,email,password)
-          VALUES ($1,$2,$3)
-          RETURNING id,password
+        INSERT INTO users (useremail,password) VALUES($1 ,$2) RETURNING *
           `,
-        [name, email, hashedPassword],
+        [ email, hashedPassword],
         (err, result) => {
           if (err) {
             throw err;

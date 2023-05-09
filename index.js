@@ -42,9 +42,6 @@ app.post("/shorturl", async (req, res) => {
   await createShortUrl(req, res);
 });
 
-app.get("/:shortUrl", async (req, res) => {
-  await redirecturl(req, res);
-});
 
 app.get("/deleteurl/:shorturl", async (req, res) => {
   if (req.isAuthenticated()) {
@@ -87,6 +84,10 @@ app.get("/users/dashboard", (req, res) => {
   res.send("login successful");
 });
 
+
+app.get("/:shortUrl", async (req, res) => {
+  await redirecturl(req, res);
+});
 app.listen(port, function () {
   console.log(`Listening on port ${port}`);
 });
