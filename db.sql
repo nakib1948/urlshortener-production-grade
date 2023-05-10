@@ -26,3 +26,9 @@ CREATE TABLE url (
   longurl VARCHAR(255) NOT NULL,
   user_id INTEGER
 );
+
+CREATE TABLE permission (
+  id SERIAL PRIMARY KEY,
+  useremail VARCHAR(255) NOT NULL,
+  role VARCHAR(255) NOT NULL
+);

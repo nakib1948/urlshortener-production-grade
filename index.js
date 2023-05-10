@@ -14,7 +14,11 @@ const initializePassport = require("./src/passportConfig");
 const createShortUrl = require("./src/createShortUrl");
 const redirecturl = require("./src/redirecturl");
 const updateurl = require("./src/updateurl");
+const adminUpdateUrl = require("./src/adminUpdateUrl");
 const deleteurl = require("./src/deleteurl");
+const adminDeleteUrl = require("./src/adminDeleteUrl");
+const adminDeleteUser = require("./src/adminDeleteUser");
+
 const allurl = require("./src/allurl");
 
 initializePassport(passport);
@@ -42,16 +46,31 @@ app.post("/shorturl", async (req, res) => {
   await createShortUrl(req, res);
 });
 
-
 app.get("/deleteurl/:shorturl", async (req, res) => {
   if (req.isAuthenticated()) {
     await deleteurl(req, res);
   } else return res.status(400).json({ error: "Please login to delete url" });
 });
 
+app.get("/adminDeleteUrl/:shorturl", async (req, res) => {
+  if (req.isAuthenticated()) {
+    await adminDeleteUrl(req, res);
+  } else return res.status(400).json({ error: "Please login to delete url" });
+});
+app.get("/adminDeleteUser/:email", async (req, res) => {
+  if (req.isAuthenticated()) {
+    await adminDeleteUser(req, res);
+  } else return res.status(400).json({ error: "Please login to delete user" });
+});
+
 app.put("/updateurl/:shorturl", async (req, res) => {
   if (req.isAuthenticated()) {
     await updateurl(req, res);
+  } else return res.status(400).json({ error: "Please login to update url" });
+});
+app.put("/adminupdateurl/:shorturl", async (req, res) => {
+  if (req.isAuthenticated()) {
+    await adminUpdateUrl(req, res);
   } else return res.status(400).json({ error: "Please login to update url" });
 });
 
@@ -83,7 +102,6 @@ app.get("/homepage", (req, res) => {
 app.get("/users/dashboard", (req, res) => {
   res.send("login successful");
 });
-
 
 app.get("/:shortUrl", async (req, res) => {
   await redirecturl(req, res);

@@ -2,10 +2,10 @@ const pool = require("../db");
 
 module.exports = async function deleteurl(req, res) {
   const { shorturl } = req.params;
-
+  const userid = req.user.id;
   const result = await pool.query(
-    "DELETE FROM url WHERE shorturl = $1 RETURNING *",
-    [shorturl]
+    "DELETE FROM url WHERE shorturl = $1 AND user_id = $2 RETURNING *",
+    [shorturl, userid]
   );
   if (result.rows.length > 0) {
     return res.json({

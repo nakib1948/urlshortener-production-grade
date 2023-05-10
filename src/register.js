@@ -6,8 +6,8 @@ const pool = require("../db");
 module.exports = async function registerUser(req, res) {
   let { email, password, password2 } = req.body;
 
-  if ( !email || !password || !password2) {
-    console.log(email,password,password2)
+  if (!email || !password || !password2) {
+    console.log(email, password, password2);
     return res.status(400).json({ error: "Please enter all fields" });
   }
   if (password.length < 6) {
@@ -18,29 +18,40 @@ module.exports = async function registerUser(req, res) {
   if (password != password2)
     return res.status(400).json({ error: "Passwords do not match" });
 
-  const hashedPassword = await bcrypt.hash(password, 10)
-  pool.query(`SELECT * FROM users WHERE useremail=$1`, [email], (err, results) => {
-    if (err) {
-      throw err;
-    }
-    if (results.rows.length > 0) {
-      return res.status(400).json({ error: "Email already registered" });
-    } else {
-      pool.query(
-        `
+  const hashedPassword = await bcrypt.hash(password, 10);
+  pool.query(
+    `SELECT * FROM users WHERE useremail=$1`,
+    [email],
+    (err, results) => {
+      if (err) {
+        throw err;
+      }
+      if (results.rows.length > 0) {
+        return res.status(400).json({ error: "Email already registered" });
+      } else {
+        pool.query(
+          `
         INSERT INTO users (useremail,password) VALUES($1 ,$2) RETURNING *
           `,
-        [ email, hashedPassword],
-        (err, result) => {
-          if (err) {
-            throw err;
+          [email, hashedPassword],
+          async (err, result) => {
+            if (err) {
+              throw err;
+            } else {
+              const result1 = await pool.query(
+                "INSERT INTO permission (useremail, role) VALUES ($1, $2) RETURNING *",
+                [email, "user"]
+              );
+              if (result1.rows.length > 0) {
+                return res.status(201).json({
+                  message: "You are now registered. Please login",
+                  data: result.rows,
+                });
+              }
+            }
           }
-          return res.status(201).json({
-            message: "You are now registered. Please login",
-            data: result.rows,
-          });
-        }
-      );
+        );
+      }
     }
-  });
+  );
 };
