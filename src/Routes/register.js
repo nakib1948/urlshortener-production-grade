@@ -1,22 +1,20 @@
 const bcrypt = require("bcrypt");
 const shortid = require("shortid");
+const Joi=require("joi")
+const {validateSignup}=require("../SchemaValidation/signupschema")
 
-const pool = require("../db");
+const pool = require("../Database/db");
 
 module.exports = async function registerUser(req, res) {
-  let { email, password, password2 } = req.body;
+  let { email, password } = req.body;
 
-  if (!email || !password || !password2) {
-    console.log(email, password, password2);
-    return res.status(400).json({ error: "Please enter all fields" });
+  const {error,value}=validateSignup(req.body)
+
+  if(error){
+    return res.json({success:'falied',
+     message: error.details[0].message});
   }
-  if (password.length < 6) {
-    return res
-      .status(400)
-      .json({ error: "Password should be at least 6 characters" });
-  }
-  if (password != password2)
-    return res.status(400).json({ error: "Passwords do not match" });
+
 
   const hashedPassword = await bcrypt.hash(password, 10);
   pool.query(
@@ -38,9 +36,14 @@ module.exports = async function registerUser(req, res) {
             if (err) {
               throw err;
             } else {
+              const getuserid=await pool.query(
+                `SELECT * FROM users WHERE useremail = $1 `,[email]
+              );
+              const user_id=getuserid.rows[0].id;
+                
               const result1 = await pool.query(
-                "INSERT INTO permission (useremail, role) VALUES ($1, $2) RETURNING *",
-                [email, "user"]
+                "INSERT INTO user_roles  (user_id, role_id) VALUES ($1, $2) RETURNING *",
+                [user_id, 2]
               );
               if (result1.rows.length > 0) {
                 return res.status(201).json({

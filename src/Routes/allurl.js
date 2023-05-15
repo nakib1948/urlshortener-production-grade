@@ -1,4 +1,4 @@
-const pool = require("../db");
+const pool = require("../Database/db");
 
 module.exports = async function allurl(req, res) {
   if (req.isAuthenticated()) {

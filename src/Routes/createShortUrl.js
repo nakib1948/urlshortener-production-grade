@@ -1,6 +1,6 @@
 const shortid = require("shortid");
 const { v4: uuidv4 } = require("uuid");
-const pool = require("../db");
+const pool = require("../Database/db");
 
 module.exports = async function createShortUrl(req, res) {
   const Url = req.body.url;

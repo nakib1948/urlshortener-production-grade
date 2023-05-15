@@ -8,19 +8,18 @@ const flash = require("express-flash");
 const app = express();
 
 const passport = require("passport");
-const registerUser = require("./src/register");
+const registerUser = require("./register");
 const port = process.env.PORT || 3002;
-const initializePassport = require("./src/passportConfig");
-const createShortUrl = require("./src/createShortUrl");
-const redirecturl = require("./src/redirecturl");
-const updateurl = require("./src/updateurl");
-const adminUpdateUrl = require("./src/adminUpdateUrl");
-const deleteurl = require("./src/deleteurl");
-const adminDeleteUrl = require("./src/adminDeleteUrl");
-const adminDeleteUser = require("./src/adminDeleteUser");
-
-const allurl = require("./src/allurl");
-
+const initializePassport = require("../passportConfig");
+const createShortUrl = require("./createShortUrl");
+const redirecturl = require("./redirecturl");
+const updateurl = require("./updateurl");
+const adminUpdateUrl = require("./adminUpdateUrl");
+const deleteurl = require("./deleteurl");
+const adminDeleteUrl = require("./adminDeleteUrl");
+const adminDeleteUser = require("./adminDeleteUser");
+const allurl = require("./allurl");
+const {loginvalidation}=require("../SchemaValidation/loginschema")
 initializePassport(passport);
 
 app.use(bodyParser.json());
@@ -29,7 +28,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(
   session({
-    secret: "secret",
+    secret: process.env.DB_SECRET,
     resave: false,
     saveUninitialized: false,
   })
@@ -79,10 +78,10 @@ app.post("/users/register", async (req, res) => {
 });
 
 app.post(
-  "/users/login",
+  "/users/login",loginvalidation,
   passport.authenticate("local", {
     successRedirect: "/users/dashboard",
-    failureRedirect: "/login",
+    failureRedirect: "/error",
   })
 );
 
@@ -101,6 +100,10 @@ app.get("/homepage", (req, res) => {
 
 app.get("/users/dashboard", (req, res) => {
   res.send("login successful");
+});
+
+app.get("/error", (req, res) => {
+  res.send("username and password incorrect");
 });
 
 app.get("/:shortUrl", async (req, res) => {

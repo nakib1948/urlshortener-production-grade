@@ -1,4 +1,4 @@
-const pool = require("../db");
+const pool = require("../Database/db");
 
 module.exports = async function deleteurl(req, res) {
   const { shorturl } = req.params;

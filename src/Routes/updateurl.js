@@ -1,4 +1,4 @@
-const pool = require("../db");
+const pool = require("../Database/db");
 const shortid = require("shortid");
 module.exports = async function updateurl(req, res) {
   const { shorturl } = req.params;

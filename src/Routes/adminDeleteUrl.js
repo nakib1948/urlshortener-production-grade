@@ -1,13 +1,14 @@
-const pool = require("../db");
+const pool = require("../Database/db");
 
 module.exports = async function adminDeleteUrl(req, res) {
   const { shorturl } = req.params;
-  const email = req.user.useremail;
+  const userid = req.user.id;
+
   const result1 = await pool.query(
-    `SELECT * FROM permission WHERE useremail = $1`,
-    [email]
+    `SELECT * FROM  user_roles WHERE user_id = $1`,
+    [userid]
   );
-  if (result1.rows.length > 0 && result1.rows[0].role === "admin") {
+  if (result1.rows.length > 0 && result1.rows[0].role_id === 1) {
     const result = await pool.query(
       "DELETE FROM url WHERE shorturl = $1 RETURNING *",
       [shorturl]

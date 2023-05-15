@@ -1,11 +1,11 @@
 {
   "name": "shorturl",
   "version": "0.0.3",
-  "description": "API project for freeCodeCamp",
-  "main": "index.js",
+  "description": "API project",
+  "main": "src/Routes/index.js",
   "scripts": {
-    "start": "nodemon index.js",
-    "dev": "nodemon index.js"
+    "start": "nodemon src/Routes/index.js",
+    "dev": "nodemon src/Routes/index.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
@@ -16,6 +16,7 @@
     "express": "^4.17.1",
     "express-flash": "^0.0.2",
     "express-session": "^1.17.3",
+    "joi": "^17.9.2",
     "mongoose": "^7.1.0",
     "nanoid": "^4.0.2",
     "passport": "^0.6.0",
