@@ -6,7 +6,7 @@ urlshortener-production-grade
 ## Database Schema
 
 The following diagram shows the schema of the project's database:
-
+```mermaid
 erDiagram 
 USERS{
     integer id PK
