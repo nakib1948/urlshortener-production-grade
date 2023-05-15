@@ -7,7 +7,7 @@ urlshortener-production-grade
 
 The following diagram shows the schema of the project's database:
 ```mermaid
-erDiagram 
+erDiagram
 USERS{
     integer id PK
     varchar email
@@ -15,7 +15,7 @@ USERS{
 }
 
  URL {
-        integer id PK,
+        integer id PK
         varchar shorturl 
         varchar longurl
         varchar urlexpiration
@@ -29,9 +29,6 @@ USER_ROLES {
         integer user_id FK
         integer role_id FK
     }
-
-
-
 
 USERS|o--o{ URL:creates
 USER_ROLES||--||ROLES :has
