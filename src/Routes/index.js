@@ -19,7 +19,9 @@ const deleteurl = require("./deleteurl");
 const adminDeleteUrl = require("./adminDeleteUrl");
 const adminDeleteUser = require("./adminDeleteUser");
 const allurl = require("./allurl");
+const updateurlexpiration=require('./urlExpiration/updateurlexpiration')
 const {loginvalidation}=require("../SchemaValidation/loginschema")
+const checkExpiredUrls=require('./urlExpiration/urlexpiration')
 initializePassport(passport);
 
 app.use(bodyParser.json());
@@ -36,6 +38,11 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
+
+
+
+setInterval(checkExpiredUrls, 5000)
+
 
 app.get("/", async (req, res) => {
   await allurl(req, res);
@@ -71,6 +78,12 @@ app.put("/adminupdateurl/:shorturl", async (req, res) => {
   if (req.isAuthenticated()) {
     await adminUpdateUrl(req, res);
   } else return res.status(400).json({ error: "Please login to update url" });
+});
+
+app.put("/updateurlexpiration/:shorturl", async (req, res) => {
+  if (req.isAuthenticated()) {
+    await updateurlexpiration(req, res);
+  } else return res.status(400).json({ error: "Please login to update url expiration" });
 });
 
 app.post("/users/register", async (req, res) => {

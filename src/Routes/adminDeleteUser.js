@@ -3,9 +3,9 @@ const pool = require("../Database/db");
 module.exports = async function adminDeleteUrl(req, res) {
   const { email } = req.params;
   //console.log(email);
- 
+
   const userid = req.user.id;
- // console.log(userid)
+  // console.log(userid)
 
   const getdeleteUserid = await pool.query(
     `SELECT * FROM  users WHERE useremail = $1`,
@@ -14,12 +14,12 @@ module.exports = async function adminDeleteUrl(req, res) {
 
   if (getdeleteUserid.rows.length > 0) {
     const deleteuserid = getdeleteUserid.rows[0].id;
-   // console.log(deleteuserid)
+    // console.log(deleteuserid)
     const result2 = await pool.query(
       `SELECT * FROM  user_roles WHERE user_id = $1`,
       [userid]
     );
-   // console.log(result2.rows[0].user_id)
+    // console.log(result2.rows[0].user_id)
     if (result2.rows.length > 0 && result2.rows[0].role_id == 1) {
       const result1 = await pool.query(
         "DELETE FROM user_roles WHERE user_id = $1 RETURNING *",
